@@ -10,6 +10,8 @@ const serverEnvSchema = z.object({
   ANTHROPIC_API_KEY: optionalString(),
   STRIPE_SECRET_KEY: optionalString(),
   STRIPE_WEBHOOK_SECRET: optionalString(),
+  STRIPE_PRICE_PRO: optionalString(),
+  STRIPE_PRICE_SCALE: optionalString(),
 });
 
 const publicEnvSchema = z.object({
@@ -33,5 +35,7 @@ export function getServerEnv() {
     ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+    STRIPE_PRICE_PRO: process.env.STRIPE_PRICE_PRO,
+    STRIPE_PRICE_SCALE: process.env.STRIPE_PRICE_SCALE,
   });
 }
