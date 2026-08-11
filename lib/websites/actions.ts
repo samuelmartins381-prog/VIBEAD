@@ -77,6 +77,8 @@ export async function startOnboarding(
     return { error: "Could not start the audit. Please try again." };
   }
 
+  await supabase.from("integrations").insert({ website_id: website.id, type: "tracking_sdk", status: "inactive" });
+
   // Runs synchronously so the audit is ready by the time we redirect —
   // simplest correct behavior for the MVP without a polling/job queue.
   await runAudit(website.id, audit.id);
