@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { publicEnv } from "@/lib/env";
 import { CopySnippet } from "@/components/dashboard/copy-snippet";
 import { WebsiteSubnav } from "@/components/dashboard/website-subnav";
+import { ConfirmSubmitButton } from "@/components/dashboard/confirm-submit-button";
+import { deleteWebsite } from "@/lib/websites/actions";
 
 export default async function WebsiteOverviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -83,6 +85,22 @@ export default async function WebsiteOverviewPage({ params }: { params: Promise<
             ))}
           </div>
         )}
+      </div>
+
+      <div className="rounded-xl border border-red-200 bg-white p-6">
+        <p className="text-sm font-medium text-zinc-900">Danger zone</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          Permanently deletes this website along with its audits, recommendations, and tracked events. This
+          cannot be undone.
+        </p>
+        <form action={deleteWebsite.bind(null, website.id)} className="mt-4">
+          <ConfirmSubmitButton
+            confirmMessage={`Delete ${website.domain} and all of its data? This can't be undone.`}
+            className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            Delete website
+          </ConfirmSubmitButton>
+        </form>
       </div>
       </div>
     </div>

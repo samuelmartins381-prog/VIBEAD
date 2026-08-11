@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripeClient } from "@/lib/stripe/client";
 import { getPriceId, type PaidPlan } from "@/lib/stripe/plans";
 import { publicEnv } from "@/lib/env";
@@ -29,7 +30,11 @@ async function getOrCreateStripeCustomerId(): Promise<{ userId: string; customer
   const stripe = getStripeClient();
   const customer = await stripe.customers.create({ email: user.email, metadata: { user_id: user.id } });
 
-  await supabase.from("users").update({ stripe_customer_id: customer.id }).eq("id", user.id);
+  // users.stripe_customer_id/plan/subscription fields are not user-writable
+  // via RLS (see migration 0002) — billing state is only ever set here and
+  // in the Stripe webhook, both server-side, both via the admin client.
+  const admin = createAdminClient();
+  await admin.from("users").update({ stripe_customer_id: customer.id }).eq("id", user.id);
 
   return { userId: user.id, customerId: customer.id, email: user.email };
 }

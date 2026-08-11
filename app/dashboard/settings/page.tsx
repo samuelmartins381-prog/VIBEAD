@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { startCheckout, openBillingPortal } from "@/lib/billing/actions";
 import { PLAN_DETAILS } from "@/lib/stripe/plans";
+import { deleteAccount } from "@/lib/account/actions";
+import { ConfirmSubmitButton } from "@/components/dashboard/confirm-submit-button";
 
 const FREE_PLAN_FEATURES = ["1 website", "1 audit", "Basic recommendations"];
 
@@ -89,6 +91,21 @@ export default async function SettingsPage({
         {plan === "free" && FREE_PLAN_FEATURES.length > 0 ? (
           <p className="mt-3 text-xs text-zinc-400">Free plan: {FREE_PLAN_FEATURES.join(" · ")}</p>
         ) : null}
+      </div>
+
+      <div className="rounded-xl border border-red-200 bg-white p-6">
+        <p className="text-sm font-medium text-zinc-900">Danger zone</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          Permanently deletes your account and all associated websites, audits, and data. This cannot be undone.
+        </p>
+        <form action={deleteAccount} className="mt-4">
+          <ConfirmSubmitButton
+            confirmMessage="Delete your account and all associated data? This can't be undone."
+            className="rounded-lg border border-red-200 bg-white px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+          >
+            Delete account
+          </ConfirmSubmitButton>
+        </form>
       </div>
     </div>
   );

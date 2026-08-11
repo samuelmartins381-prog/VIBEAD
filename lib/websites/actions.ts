@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { runAudit } from "@/lib/audit/run-audit";
+import { isRateLimited } from "@/lib/security/rate-limit";
+
+const MAX_AUDITS_PER_HOUR = 10;
 
 export type OnboardingState = { error: string | null };
 
@@ -46,6 +49,10 @@ export async function startOnboarding(
     redirect("/login");
   }
 
+  if (isRateLimited(`onboarding:${user.id}`, MAX_AUDITS_PER_HOUR, 60 * 60_000)) {
+    return { error: "You've started a lot of audits recently. Please try again in a bit." };
+  }
+
   let domain: string;
   try {
     domain = new URL(parsed.data.url).hostname;
@@ -84,4 +91,22 @@ export async function startOnboarding(
   await runAudit(website.id, audit.id);
 
   redirect(`/dashboard/websites/${website.id}/audit`);
+}
+
+// Deletes a website and, via FK cascade, its audits, recommendations,
+// integrations, and events. RLS (websites_delete_own) already scopes this
+// to the caller's own rows, so no explicit ownership check is needed here.
+export async function deleteWebsite(websiteId: string): Promise<void> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  await supabase.from("websites").delete().eq("id", websiteId);
+
+  redirect("/dashboard");
 }
