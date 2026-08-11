@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { WebsiteSubnav } from "@/components/dashboard/website-subnav";
 
 const MODEL_LABELS: Record<string, string> = {
   advertising: "Advertising",
@@ -59,6 +60,9 @@ export default async function AuditPage({ params }: { params: Promise<{ id: stri
     <div className="mx-auto max-w-3xl">
       <p className="text-sm text-zinc-500">{website.domain}</p>
       <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">Monetization audit</h1>
+      <div className="mt-4">
+        <WebsiteSubnav websiteId={website.id} active="audit" />
+      </div>
 
       {!audit ? (
         <div className="mt-8 rounded-xl border border-dashed border-zinc-300 bg-white p-10 text-center text-sm text-zinc-500">

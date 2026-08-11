@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const opportunities = [
   {
     title: "Add contextual ads",
@@ -23,6 +25,9 @@ export function ExampleAudit() {
             A real audit, not a guess
           </h2>
           <p className="mt-3 text-zinc-500">Every recommendation comes with a reason and an estimated impact.</p>
+          <Link href="/demo" className="mt-3 inline-block text-sm font-medium text-zinc-900 hover:underline">
+            See a full demo audit &rarr;
+          </Link>
         </div>
 
         <div className="mt-14 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">

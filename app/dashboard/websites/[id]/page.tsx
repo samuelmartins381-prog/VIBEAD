@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { publicEnv } from "@/lib/env";
 import { CopySnippet } from "@/components/dashboard/copy-snippet";
+import { WebsiteSubnav } from "@/components/dashboard/website-subnav";
 
 export default async function WebsiteOverviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -34,19 +34,14 @@ export default async function WebsiteOverviewPage({ params }: { params: Promise<
   const isActive = integration?.status === "active";
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
-      <div>
-        <p className="text-sm text-zinc-500">{website.domain}</p>
-        <div className="mt-1 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">{website.name || website.domain}</h1>
-          <Link
-            href={`/dashboard/websites/${website.id}/audit`}
-            className="text-sm font-medium text-zinc-600 hover:text-zinc-900"
-          >
-            View audit &rarr;
-          </Link>
-        </div>
+    <div className="mx-auto max-w-3xl">
+      <p className="text-sm text-zinc-500">{website.domain}</p>
+      <h1 className="mt-1 text-2xl font-semibold tracking-tight text-zinc-900">{website.name || website.domain}</h1>
+      <div className="mt-4">
+        <WebsiteSubnav websiteId={website.id} active="overview" />
       </div>
+
+      <div className="space-y-8">
 
       <div className="rounded-xl border border-zinc-200 bg-white p-6">
         <div className="flex items-center justify-between">
@@ -88,6 +83,7 @@ export default async function WebsiteOverviewPage({ params }: { params: Promise<
             ))}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
