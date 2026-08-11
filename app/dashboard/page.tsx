@@ -1,6 +1,31 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
+const MODEL_LABELS: Record<string, string> = {
+  advertising: "Advertising",
+  affiliate: "Affiliate",
+  subscription: "Subscription",
+  lead_generation: "Lead generation",
+  sponsorship: "Sponsorship",
+  none: "Growth first",
+};
+
+function statusLabel(status: string | undefined): string {
+  switch (status) {
+    case "completed":
+      return "Optimizing";
+    case "failed":
+      return "Failed";
+    case "crawling":
+    case "analyzing":
+      return "Analyzing…";
+    case "pending":
+      return "Queued";
+    default:
+      return "Not started";
+  }
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const {
@@ -12,6 +37,26 @@ export default async function DashboardPage() {
     .select("id, url, domain, name, created_at")
     .eq("user_id", user!.id)
     .order("created_at", { ascending: false });
+
+  const websiteIds = (websites ?? []).map((w) => w.id);
+  const latestAuditByWebsite = new Map<
+    string,
+    { status: string; score: number | null; monetization_recommendation: Record<string, unknown> }
+  >();
+
+  if (websiteIds.length > 0) {
+    const { data: audits } = await supabase
+      .from("audits")
+      .select("website_id, status, score, monetization_recommendation, created_at")
+      .in("website_id", websiteIds)
+      .order("created_at", { ascending: false });
+
+    for (const audit of audits ?? []) {
+      if (!latestAuditByWebsite.has(audit.website_id)) {
+        latestAuditByWebsite.set(audit.website_id, audit);
+      }
+    }
+  }
 
   return (
     <div>
@@ -39,16 +84,30 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {websites.map((site) => (
-            <Link
-              key={site.id}
-              href={`/dashboard/websites/${site.id}`}
-              className="rounded-xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-300 hover:shadow-sm"
-            >
-              <p className="font-medium text-zinc-900">{site.name || site.domain}</p>
-              <p className="mt-1 truncate text-sm text-zinc-500">{site.url}</p>
-            </Link>
-          ))}
+          {websites.map((site) => {
+            const audit = latestAuditByWebsite.get(site.id);
+            const primary = audit?.monetization_recommendation?.primary_model as string | undefined;
+
+            return (
+              <Link
+                key={site.id}
+                href={`/dashboard/websites/${site.id}`}
+                className="rounded-xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-300 hover:shadow-sm"
+              >
+                <p className="font-medium text-zinc-900">{site.name || site.domain}</p>
+                <p className="mt-1 truncate text-sm text-zinc-500">{site.url}</p>
+                <div className="mt-4 flex items-center justify-between text-sm">
+                  <span className="font-semibold text-zinc-900">
+                    {audit?.score != null ? `${audit.score}/100` : "—"}
+                  </span>
+                  <span className="text-zinc-500">{primary ? MODEL_LABELS[primary] ?? primary : "—"}</span>
+                </div>
+                <p className="mt-2 text-xs font-medium uppercase tracking-wide text-zinc-400">
+                  {statusLabel(audit?.status)}
+                </p>
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>
