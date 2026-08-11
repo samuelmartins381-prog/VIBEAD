@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { runAudit } from "@/lib/audit/run-audit";
 
 export type OnboardingState = { error: string | null };
 
@@ -75,6 +76,10 @@ export async function startOnboarding(
   if (auditError || !audit) {
     return { error: "Could not start the audit. Please try again." };
   }
+
+  // Runs synchronously so the audit is ready by the time we redirect —
+  // simplest correct behavior for the MVP without a polling/job queue.
+  await runAudit(website.id, audit.id);
 
   redirect(`/dashboard/websites/${website.id}/audit`);
 }
