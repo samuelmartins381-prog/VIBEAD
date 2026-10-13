@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#141312" />
+  <title>Watch Essentials</title>
+  <meta name="description" content="Watch Essentials — interactive redesign prototype of the FHH Academy learning experience." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="presenter" aria-hidden="true">
+    <p class="presenter-kicker">Interactive prototype</p>
+    <p class="presenter-title">Watch Essentials<br /><em>— the next chapter</em></p>
+    <p class="presenter-keys"><kbd>A</kbd> autoplay demo &nbsp; <kbd>R</kbd> reset</p>
+  </aside>
+
+  <div class="device" id="device">
+    <!-- ============ SCENE 1 · INTRODUCTION ============ -->
+    <section class="scene intro is-active" id="intro" aria-label="Introduction">
+      <div class="intro-grain"></div>
+      <svg class="intro-geo" id="introGeo" viewBox="0 0 300 300" aria-hidden="true">
+        <g class="geo-lines">
+          <circle class="geo-draw" cx="150" cy="150" r="120" pathLength="1" transform="rotate(-90 150 150)" />
+          <rect class="geo-draw" x="65.15" y="65.15" width="169.7" height="169.7" pathLength="1" />
+          <line class="geo-draw" x1="10" y1="10" x2="290" y2="290" pathLength="1" />
+          <line class="geo-draw" x1="290" y1="10" x2="10" y2="290" pathLength="1" />
+          <line class="geo-draw geo-axis" x1="150" y1="0" x2="150" y2="300" pathLength="1" />
+          <line class="geo-draw geo-axis" x1="0" y1="150" x2="300" y2="150" pathLength="1" />
+        </g>
+        <g class="geo-ticks" id="geoTicks"></g>
+        <g class="geo-hand" id="geoHand">
+          <line x1="150" y1="172" x2="150" y2="36" />
+          <circle cx="150" cy="166" r="3.2" class="geo-counter" />
+          <circle cx="150" cy="150" r="2.6" class="geo-pin" />
+        </g>
+      </svg>
+
+      <header class="intro-brand">
+        <span>FHH Academy</span><i></i><span>Watch Essentials</span>
+      </header>
+
+      <div class="intro-copy">
+        <p class="intro-chapter"><span class="numeral">I</span> Speak my language</p>
+        <h1 class="intro-title">
+          <span class="line"><span>Discover</span></span>
+          <span class="line"><span><em>the art of</em></span></span>
+          <span class="line"><span>watchmaking</span></span>
+        </h1>
+        <p class="intro-sub">Every detail tells a story.</p>
+      </div>
+
+      <div class="intro-foot">
+        <button class="btn-begin" id="begin" type="button">
+          <svg class="btn-begin-frame" aria-hidden="true" preserveAspectRatio="none"><rect x="0.5" y="0.5" pathLength="1" /></svg>
+          <span class="btn-begin-fill" aria-hidden="true"></span>
+          <span class="btn-begin-label">Begin learning</span>
+          <svg class="btn-arrow" viewBox="0 0 28 12" aria-hidden="true"><path d="M0 6h26M21 1l5 5-5 5" /></svg>
+        </button>
+        <p class="intro-meta">5 components &nbsp;·&nbsp; 3 questions &nbsp;·&nbsp; 2 minutes</p>
+      </div>
+    </section>
+
+    <!-- ============ SCENES 2–3 · LEARN (explore + knowledge check) ============ -->
+    <section class="scene learn" id="learn" aria-label="Watch components">
+      <header class="topbar">
+        <button class="icon-btn" id="back" type="button" aria-label="Back">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4l-8 8 8 8" /></svg>
+        </button>
+        <div class="topbar-title">
+          <span class="numeral">I.2</span>
+          <span class="topbar-name" id="topbarName">Watch components</span>
+        </div>
+        <div class="topbar-progress" id="topProgress" aria-live="polite"></div>
+      </header>
+
+      <div class="stage" id="stage">
+        <svg class="plate" aria-hidden="true" preserveAspectRatio="xMidYMid slice" viewBox="0 0 400 600">
+          <g class="plate-lines">
+            <circle cx="200" cy="300" r="182" />
+            <circle cx="200" cy="300" r="250" />
+            <rect x="71" y="171" width="258" height="258" />
+            <line x1="-100" y1="0" x2="500" y2="600" />
+            <line x1="500" y1="0" x2="-100" y2="600" />
+            <line x1="200" y1="-20" x2="200" y2="620" />
+          </g>
+          <g class="plate-ruler" id="plateRuler"></g>
+        </svg>
+        <svg class="watch" id="watch" role="group" aria-label="Interactive wristwatch. Select a component."></svg>
+        <p class="stage-hint" id="stageHint"><span class="hint-dot"></span>Tap the watch to explore</p>
+      </div>
+
+      <div class="panels" id="panels">
+        <!-- Explore -->
+        <section class="panel" id="explorePanel" aria-live="polite">
+          <div class="ex-head">
+            <span class="ex-index" id="exIndex">Explore</span>
+            <span class="ex-fr" id="exFr"></span>
+          </div>
+          <h2 class="ex-name" id="exName">Learn my components</h2>
+          <p class="ex-def" id="exDef">Before you can speak about watches with precision, learn the names of their parts. Tap any component on the watch.</p>
+          <nav class="rail" id="rail" role="tablist" aria-label="Components"></nav>
+          <button class="cta" id="toQuiz" type="button">
+            <span class="cta-fill" aria-hidden="true"></span>
+            <span class="cta-label">Test your knowledge</span>
+            <svg class="btn-arrow" viewBox="0 0 28 12" aria-hidden="true"><path d="M0 6h26M21 1l5 5-5 5" /></svg>
+          </button>
+        </section>
+
+        <!-- Knowledge check -->
+        <section class="panel" id="quizPanel" hidden>
+          <div class="q-meta">
+            <span>Knowledge check</span>
+            <span class="q-segs" id="qSegs"><i></i><i></i><i></i></span>
+          </div>
+          <h2 class="q-title" id="qTitle">Which component is highlighted?</h2>
+          <div class="q-body">
+            <div class="q-options" id="qOptions" role="group" aria-label="Answers"></div>
+            <div class="q-result" id="qResult" aria-live="polite">
+              <p class="q-result-kicker"><svg viewBox="0 0 16 16" aria-hidden="true"><path pathLength="1" d="M3 8.5l3.2 3.2L13 4.5" /></svg><span>Correct</span></p>
+              <p class="q-result-text" id="qResultText"></p>
+              <p class="q-earned" id="qEarned"></p>
+            </div>
+          </div>
+          <div class="q-foot">
+            <p class="q-hint" id="qHint" aria-live="polite"></p>
+            <button class="cta cta--solid q-next" id="qNext" type="button" hidden>
+              <span class="cta-label" id="qNextLabel">Next question</span>
+              <svg class="btn-arrow" viewBox="0 0 28 12" aria-hidden="true"><path d="M0 6h26M21 1l5 5-5 5" /></svg>
+            </button>
+          </div>
+        </section>
+
+        <!-- Chapter complete -->
+        <section class="panel" id="donePanel" hidden>
+          <p class="done-kicker">Chapter I.2 complete</p>
+          <h2 class="done-title">You are beginning to <em>speak my language.</em></h2>
+          <p class="done-score" id="doneScore"></p>
+          <ul class="done-earned" id="doneEarned" aria-label="Components earned"></ul>
+          <div class="done-actions">
+            <button class="cta" id="exploreAgain" type="button"><span class="cta-label">Explore again</span></button>
+            <button class="cta cta--solid" id="retake" type="button"><span class="cta-label">Retake</span></button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- Touch indicator used by the autoplay demonstration -->
+    <div class="finger" id="finger" aria-hidden="true"></div>
+  </div>
+
+  <script src="motion.js"></script>
+  <script src="content.js"></script>
+  <script src="watch.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
